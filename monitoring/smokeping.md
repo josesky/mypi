@@ -8,35 +8,35 @@
 
 ### 软件安装
 
--   当前环境Cetnso7.5
+- 当前环境Cetnso7.5
 
 #### 安装依赖的软件包
 
--   能通过yum安装的可以通过yum安装,安装epel源
+- 能通过yum安装的可以通过yum安装,安装epel源
     > yum -y install epel-release
--   安装必须要的包
+- 安装必须要的包
     > yum install fping curl bind-utils httpd httpd-devel mod_fcgid  rrdtool perl-rrdtool
--   下载最近的安装包
+- 下载最近的安装包
     > curl -O <https://oss.oetiker.ch/smokeping/pub/smokeping-2.7.2.tar.gz>
--   需要安装很多perl的扩展看着样子很多
+- 需要安装很多perl的扩展看着样子很多
     > yum -y install cpan perl perl-FCGI perl-CGI perl-Digest-HMAC perl-Net-Telnet perl-Net-OpenSSH perl-Net-SNMP perl-LDAP perl-Net-DNS perl-IO-Pty-Easy perl-Test-Simple perl-Sys-Syslog perl-lib www-perlperl-IO-Socket-SSL perl-Socket6 perl-CGI-SpeedyCGI perl-FCGI perl-Time-HiRes perl-ExtUtils-MakeMaker perl-GSSAPI perl-XML-Writer perl-Module-Build
 
 #### 安装smokeping软件
 
--   安装软件
+- 安装软件
 
     > ./configure --prefix=/opt/smokeping
     > /usr/bin/gmake install
 
--   配置软件目录
+- 配置软件目录
 
     > cd /opt/smokeping/etc
     > cp config.dist config
     > cp /opt/smokeping/etc/basepage.html.dist /opt/smokeping/etc/basepage.html
 
--   编辑配置文件
+- 编辑配置文件
 
-
+```bash
     cat << EOF > /opt/smokeping/etc/config
     *** General ***
 
@@ -219,38 +219,42 @@
     host = 220.181.22.11
 
     EOF
+```
 
 ### 配置httpd 设置页面访问
 
 #### 创建需要的目录并赋权限
 
-    mkdir /opt/smokeping/data
-    mkdir /opt/smokeping/var
-    mkdir /var/www/smokeping
-    mkdir /var/www/smokeping/cache
+```bash
+mkdir /opt/smokeping/data
+mkdir /opt/smokeping/var
+mkdir /var/www/smokeping
+mkdir /var/www/smokeping/cache
+cp -R /opt/smokeping/htdocs/* /var/www/smokeping
+mv /var/www/smokeping/smokeping.fcgi.dist /var/www/smokeping/smokeping.fcgi
+chown -R apache:apache /var/www/smokeping
+````
 
-    cp -R /opt/smokeping/htdocs/* /var/www/smokeping
-    mv /var/www/smokeping/smokeping.fcgi.dist /var/www/smokeping/smokeping.fcgi
-    chown -R apache:apache /var/www/smokeping
+## 创建程序运行的虚拟机
 
-#### 创建程序运行的虚拟机
-
-    cat << EOF > /etc/httpd/conf.d/smokeping.conf
-    Alias /smokeping "/var/www/smokeping"
-    <Directory /var/www/smokeping>
-    Options Indexes FollowSymLinks MultiViews ExecCGI
-    AllowOverride All
-    Order allow,deny
-    Allow from all
-    DirectoryIndex smokeping.fcgi
-    </Directory>
-    EOF
+```bash
+cat << EOF > /etc/httpd/conf.d/smokeping.conf
+Alias /smokeping "/var/www/smokeping"
+<Directory /var/www/smokeping>
+Options Indexes FollowSymLinks MultiViews ExecCGI
+AllowOverride All
+Order allow,deny
+Allow from all
+DirectoryIndex smokeping.fcgi
+</Directory>
+EOF
+```
 
 ## 启动服务
 
 #### 启动smokeping
 
- /opt/smokeping/bin/smokeping --config=/opt/smokeping/etc/config --debug-daemon
+> /opt/smokeping/bin/smokeping --config=/opt/smokeping/etc/config --debug-daemon
 
 #### 启动httpd
 
