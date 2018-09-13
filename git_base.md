@@ -304,16 +304,39 @@ target/*
 
 ```
 
-```git 
+#### git stash 储藏和储藏后的删除
 
-git stash 隐藏当前工作区,改动数据
-git pull
-git stash list
-git stash pop
+当我们切换分支, 或者我们要git pull 文件的时候且文件在缓存区中没有提交。 这个时候需要用到git stash 隐藏当前工作区尚未提交的文件
 
-一是用git stash apply恢复，但是恢复后，stash内容并不删除，你需要用git stash drop来删除；
+##### git stash 储藏及查看工作区
 
-另一种方式是用git stash pop，恢复的同时把stash内容也删了：
+git stash 就可以完成工作区的储藏,具体如下: 
+>$ git stash  
+Saved working directory and index state WIP on office: 274eb46 Update git_base.m                                                                                                              d  
+
+
+git stash show 查看当前所有储藏工作区的文件状态:
+>$ git stash show  
+ cc.sh | 2 ++  
+ 1 file changed, 2 insertions(+)
+
+git stash list 查看当前所有的工作区储藏:
+>$ git stash list  
+stash@{0}: WIP on master: 274eb46 Update git_base.md  
+stash@{1}: WIP on office: 274eb46 Update git_base.md
+
+隐藏后的工作分区比较干净
+>$ git status  
+On branch master
+Your branch is up to date with 'origin/master'.  
+nothing to commit, working tree clean
+
+##### git stash 处理完成后还原隐藏的储藏
+
+git apply stash@{1} 还原1的隐藏工作区,不会删除还原过的隐藏工作区  
+git drop stash@{1} # 用这个命令来删除  
+git apply pop  # 来应用储藏然后立即从栈上扔掉它  
+
 
 ```
 
