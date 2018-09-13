@@ -304,8 +304,6 @@ target/*
 
 ```
 
-
-
 ```git 
 
 git stash 隐藏当前工作区,改动数据
@@ -326,4 +324,4 @@ git blame file
 
 ##### 查看具体用户提交记录
 
-git log --author="qiaosen"
+git log --author="YouName"
