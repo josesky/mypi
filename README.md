@@ -1,20 +1,11 @@
 # 根据地
 
-### At home
+记录文档
 
+- git_base.md 说明git基本使用
 
-## 我的根据地
+## system 记录系统的一些问题
 
-### 哈哈我的根据地
+- TarEncrypt 记录使用TarOpenssl加密打包
 
-#### 我的根据地   
-
-* Item 1
-  * Nested Item 1
-  * Nested Item 2
-  * Nested Item 3
-
-
-## Heading
-
-### nihao 
+## other 其它的一些东西
