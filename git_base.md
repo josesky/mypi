@@ -1,6 +1,6 @@
 #  git基础
 
-我需要git来做版本控制
+需要git来做版本控制
 
 ## 安装了gitlab
 
@@ -336,6 +336,13 @@ nothing to commit, working tree clean
 git apply stash@{1} 还原1的隐藏工作区,不会删除还原过的隐藏工作区  
 git drop stash@{1} # 用这个命令来删除  
 git apply pop  # 来应用储藏然后立即从栈上扔掉它  
+
+##### git clean -d -f 清理为追踪的项目
+
+> $ git clean -d -f  
+Removing bb.sh  
+Removing fiel.md
+
 
 
 ```
