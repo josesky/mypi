@@ -1,0 +1,345 @@
+
+
+
+
+curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+
+
+# step 1: 安装必要的一些系统工具
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+# Step 2: 添加软件源信息
+sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+# Step 3: 更新并安装 Docker-CE
+sudo yum makecache fast
+sudo yum -y install docker-ce
+# Step 4: 开启Docker服务
+sudo service docker start
+
+
+# 注意：
+# 官方软件源默认启用了最新的软件，您可以通过编辑软件源的方式获取各个版本的软件包。例如官方并没有将测试版本的软件源置为可用，你可以通过以下方式开启。同理可以开启各种测试版本等。
+# vim /etc/yum.repos.d/docker-ce.repo
+#   将 [docker-ce-test] 下方的 enabled=0 修改为 enabled=1
+#
+# 安装指定版本的Docker-CE:
+# Step 1: 查找Docker-CE的版本:
+# yum list docker-ce.x86_64 --showduplicates | sort -r
+#   Loading mirror speeds from cached hostfile
+#   Loaded plugins: branch, fastestmirror, langpacks
+#   docker-ce.x86_64            17.03.1.ce-1.el7.centos            docker-ce-stable
+#   docker-ce.x86_64            17.03.1.ce-1.el7.centos            @docker-ce-stable
+#   docker-ce.x86_64            17.03.0.ce-1.el7.centos            docker-ce-stable
+#   Available Packages
+# Step2 : 安装指定版本的Docker-CE: (VERSION 例如上面的 17.03.0.ce.1-1.el7.centos)
+# sudo yum -y install docker-ce-[VERSION]
+
+
+
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+setenforce 0
+yum install -y kubelet kubeadm kubectl
+systemctl enable kubelet && systemctl start kubelet
+
+yum install docker-ce kubelet kubeadm kubectl
+
+vim /usr/lib/systemd/system/docker.service 
+
+
+Environment="HTTPS_PROXY=http://www.ik8s.io:10080"
+Environment="NO_PROXY=127.0.0.0/8,192.168.0.0/16"
+
+systemctl daemon-reload 
+
+systemctl enable docker kubelet 
+
+[root@k8s1 ~]# kubeadm init --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12  
+unable to get URL "https://dl.k8s.io/release/stable-1.11.txt": Get https://storage.googleapis.com/kubernetes-release/release/stable-1.11.txt: dial tcp 216.58.220.208:443: i/o timeout
+
+
+kubeadm init --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12  --kubernetes-version=v1.11.2  --ignore-preflight-errors=Swap
+
+[root@k8s1 ~]# kubeadm init --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12  --kubernetes-version=v1.11.2
+[init] using Kubernetes version: v1.11.2
+[preflight] running pre-flight checks
+I0901 23:11:53.835571    3179 kernel_validator.go:81] Validating kernel version
+I0901 23:11:53.835681    3179 kernel_validator.go:96] Validating kernel config
+	[WARNING SystemVerification]: docker version is greater than the most recently validated version. Docker version: 18.06.1-ce. Max validated version: 17.03
+	[WARNING Hostname]: hostname "k8s1" could not be reached
+	[WARNING Hostname]: hostname "k8s1" lookup k8s1 on 8.8.8.8:53: no such host
+[preflight] Some fatal errors occurred:
+	[ERROR Swap]: running with swap on is not supported. Please disable swap
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+[root@k8s1 ~]# swap
+swaplabel  swapoff    swapon     
+[root@k8s1 ~]# swapoff 
+或者
+# KUBELET_EXTRA_ARGS="--fail-swap-on=false"
+kubeadm init --ignore-preflight-errors=Swap
+ 
+最小的
+ kubeadm init --ignore-preflight-errors=Swap
+
+[root@k8s1 ~]# kubeadm init --pod-network-cidr=10.244.0.0/16 --service-cidr=10.96.0.0/12  --kubernetes-version=v1.11.2  --ignore-preflight-errors=Swap
+[init] using Kubernetes version: v1.11.2
+[preflight] running pre-flight checks
+I0901 23:12:11.322884    3218 kernel_validator.go:81] Validating kernel version
+I0901 23:12:11.323389    3218 kernel_validator.go:96] Validating kernel config
+	[WARNING SystemVerification]: docker version is greater than the most recently validated version. Docker version: 18.06.1-ce. Max validated version: 17.03
+	[WARNING Hostname]: hostname "k8s1" could not be reached
+	[WARNING Hostname]: hostname "k8s1" lookup k8s1 on 8.8.8.8:53: no such host
+[preflight/images] Pulling images required for setting up a Kubernetes cluster
+[preflight/images] This might take a minute or two, depending on the speed of your internet connection
+[preflight/images] You can also perform this action in beforehand using 'kubeadm config images pull'
+[kubelet] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[preflight] Activating the kubelet service
+[certificates] Generated ca certificate and key.
+[certificates] Generated apiserver certificate and key.
+[certificates] apiserver serving cert is signed for DNS names [k8s1 kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 192.168.100.180]
+[certificates] Generated apiserver-kubelet-client certificate and key.
+[certificates] Generated sa key and public key.
+[certificates] Generated front-proxy-ca certificate and key.
+[certificates] Generated front-proxy-client certificate and key.
+[certificates] Generated etcd/ca certificate and key.
+[certificates] Generated etcd/server certificate and key.
+[certificates] etcd/server serving cert is signed for DNS names [k8s1 localhost] and IPs [127.0.0.1 ::1]
+[certificates] Generated etcd/peer certificate and key.
+[certificates] etcd/peer serving cert is signed for DNS names [k8s1 localhost] and IPs [192.168.100.180 127.0.0.1 ::1]
+[certificates] Generated etcd/healthcheck-client certificate and key.
+[certificates] Generated apiserver-etcd-client certificate and key.
+[certificates] valid certificates and keys now exist in "/etc/kubernetes/pki"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/admin.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/kubelet.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/controller-manager.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/scheduler.conf"
+[controlplane] wrote Static Pod manifest for component kube-apiserver to "/etc/kubernetes/manifests/kube-apiserver.yaml"
+[controlplane] wrote Static Pod manifest for component kube-controller-manager to "/etc/kubernetes/manifests/kube-controller-manager.yaml"
+[controlplane] wrote Static Pod manifest for component kube-scheduler to "/etc/kubernetes/manifests/kube-scheduler.yaml"
+[etcd] Wrote Static Pod manifest for a local etcd instance to "/etc/kubernetes/manifests/etcd.yaml"
+[init] waiting for the kubelet to boot up the control plane as Static Pods from directory "/etc/kubernetes/manifests" 
+[init] this might take a minute or longer if the control plane images have to be pulled
+[apiclient] All control plane components are healthy after 43.501989 seconds
+[uploadconfig] storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.11" in namespace kube-system with the configuration for the kubelets in the cluster
+[markmaster] Marking the node k8s1 as master by adding the label "node-role.kubernetes.io/master=''"
+[markmaster] Marking the node k8s1 as master by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[patchnode] Uploading the CRI Socket information "/var/run/dockershim.sock" to the Node API object "k8s1" as an annotation
+[bootstraptoken] using token: 5yzozb.w3fpkhon6kg16w8v
+[bootstraptoken] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstraptoken] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstraptoken] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstraptoken] creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes master has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of machines by running the following on each node
+as root:
+
+  kubeadm join 192.168.100.180:6443 --token 5yzozb.w3fpkhon6kg16w8v --discovery-token-ca-cert-hash sha256:72ca4460d7e911ab9cf66337578cece01b1fa1c31fae605d8ae80755bcc6db70
+
+[root@k8s1 ~]# 
+
+
+
+[root@k8s1 ~]# docker images
+REPOSITORY                                 TAG                 IMAGE ID            CREATED             SIZE
+k8s.gcr.io/kube-proxy-amd64                v1.11.2             46a3cd725628        3 weeks ago         97.8MB
+k8s.gcr.io/kube-apiserver-amd64            v1.11.2             821507941e9c        3 weeks ago         187MB
+k8s.gcr.io/kube-controller-manager-amd64   v1.11.2             38521457c799        3 weeks ago         155MB
+k8s.gcr.io/kube-scheduler-amd64            v1.11.2             37a1403e6c1a        3 weeks ago         56.8MB
+k8s.gcr.io/coredns                         1.1.3               b3b94275d97c        3 months ago        45.6MB
+k8s.gcr.io/etcd-amd64                      3.2.18              b8df3b177be2        4 months ago        219MB
+k8s.gcr.io/pause                           3.1                 da86e6ba6ca1        8 months ago        742kB
+
+
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  
+  [root@k8s1 ~]# kubectl get cs
+
+
+[root@k8s1 ~]# kubectl get nodes
+NAME      STATUS     ROLES     AGE       VERSION
+k8s1      NotReady   master    41m       v1.11.2
+
+
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+
+[root@k8s1 ~]# kubectl get pods
+No resources found.
+[root@k8s1 ~]# kubectl get pods
+No resources found.
+[root@k8s1 ~]# kubectl get nodes
+NAME      STATUS    ROLES     AGE       VERSION
+k8s1      Ready     master    45m       v1.11.2
+[root@k8s1 ~]# kubectl get pods -n kube-system
+NAME                           READY     STATUS    RESTARTS   AGE
+coredns-78fcdf6894-c6ctv       1/1       Running   0          45m
+coredns-78fcdf6894-wvb5j       1/1       Running   0          45m
+etcd-k8s1                      1/1       Running   0          45m
+kube-apiserver-k8s1            1/1       Running   0          45m
+kube-controller-manager-k8s1   1/1       Running   0          45m
+kube-flannel-ds-amd64-qzzf2    1/1       Running   0          2m
+kube-proxy-6gg2w               1/1       Running   0          45m
+kube-scheduler-k8s1            1/1       Running   0          45m
+[root@k8s1 ~]# kubectl get ns
+NAME          STATUS    AGE
+default       Active    46m
+kube-public   Active    46m
+kube-system   Active    46m
+
+
+
+
+k8s2 加入时候报错  时间问题 ntpdate
+
+
+[discovery] Failed to request cluster info, will try again: [Get https://192.168.100.180:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
+[discovery] Failed to request cluster info, will try again: [Get https://192.168.100.180:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
+[discovery] Failed to request cluster info, will try again: [Get https://192.168.100.180:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
+[discovery] Failed to request cluster info, will try again: [Get https://192.168.100.180:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
+[discovery] Failed to request cluster info, will try again: [Get https://192.168.100.180:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
+[discovery] Failed to request cluster info, will try again: [Get https://192.168.100.180:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
+[discovery] Failed to request cluster info, will try again: [Get https://192.168.100.180:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
+[discovery] Failed to request cluster info, will try again: [Get https://192.168.100.180:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
+
+
+swap分区 关闭
+
+[discovery] Trying to connect to API Server "192.168.100.180:6443"
+[discovery] Created cluster-info discovery client, requesting info from "https://192.168.100.180:6443"
+[discovery] Requesting info from "https://192.168.100.180:6443" again to validate TLS against the pinned public key
+[discovery] Failed to request cluster info, will try again: [Get https://192.168.100.180:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
+[discovery] Failed to request cluster info, will try again: [Get https://192.168.100.180:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
+
+
+
+
+重新生成
+kubeadm token create --print-join-command 
+
+
+[root@docker ~]# kubeadm join 192.168.100.180:6443 --token kdwhj2.j1883xvxqx21o0rs --discovery-token-ca-cert-hash sha256:cb25de3d64d8275daeddbfa33f0e03f24e5f10f9014809465b788a6c28d0baaa
+[preflight] running pre-flight checks
+	[WARNING RequiredIPVSKernelModulesAvailable]: the IPVS proxier will not be used, because the following required kernel modules are not loaded: [ip_vs ip_vs_rr ip_vs_wrr ip_vs_sh] or no builtin kernel ipvs support: map[ip_vs:{} ip_vs_rr:{} ip_vs_wrr:{} ip_vs_sh:{} nf_conntrack_ipv4:{}]
+you can solve this problem with following methods:
+ 1. Run 'modprobe -- ' to load missing kernel modules;
+2. Provide the missing builtin kernel ipvs support
+
+I0903 00:56:02.229368    2255 kernel_validator.go:81] Validating kernel version
+I0903 00:56:02.229593    2255 kernel_validator.go:96] Validating kernel config
+	[WARNING SystemVerification]: docker version is greater than the most recently validated version. Docker version: 18.06.1-ce. Max validated version: 17.03
+	[WARNING Hostname]: hostname "docker" could not be reached
+	[WARNING Hostname]: hostname "docker" lookup docker on 223.5.5.5:53: no such host
+[discovery] Trying to connect to API Server "192.168.100.180:6443"
+[discovery] Created cluster-info discovery client, requesting info from "https://192.168.100.180:6443"
+[discovery] Requesting info from "https://192.168.100.180:6443" again to validate TLS against the pinned public key
+[discovery] Cluster info signature and contents are valid and TLS certificate validates against pinned roots, will use API Server "192.168.100.180:6443"
+[discovery] Successfully established connection with API Server "192.168.100.180:6443"
+[kubelet] Downloading configuration for the kubelet from the "kubelet-config-1.11" ConfigMap in the kube-system namespace
+Unauthorized
+
+kubeadm token create
+
+[discovery] Failed to connect to API Server "192.168.100.180:6443": token id "kdwhj2" is invalid for this cluster or it has expired. Use "kubeadm token create" on the master node to creating a new valid token
+
+
+
+kubeadm join 192.168.100.180:6443 --token kdwhj2.j1883xvxqx21o0rs --discovery-token-ca-cert-hash sha256:cb25de3d64d8275daeddbfa33f0e03f24e5f10f9014809465b788a6c28d0baaa
+
+   
+   
+[root@k8s3 ~]#    kubeadm join 192.168.100.180:6443 --token 7brhp4.x9h6q4kom2ba6kj9 --discovery-token-ca-cert-hash sha256:cb25de3d64d8275daeddbfa33f0e03f24e5f10f9014809465b788a6c28d0baaa
+[preflight] running pre-flight checks
+	[WARNING RequiredIPVSKernelModulesAvailable]: the IPVS proxier will not be used, because the following required kernel modules are not loaded: [ip_vs ip_vs_rr ip_vs_wrr ip_vs_sh] or no builtin kernel ipvs support: map[ip_vs:{} ip_vs_rr:{} ip_vs_wrr:{} ip_vs_sh:{} nf_conntrack_ipv4:{}]
+you can solve this problem with following methods:
+ 1. Run 'modprobe -- ' to load missing kernel modules;
+2. Provide the missing builtin kernel ipvs support
+
+I0903 01:25:57.999657    2486 kernel_validator.go:81] Validating kernel version
+I0903 01:25:57.999804    2486 kernel_validator.go:96] Validating kernel config
+	[WARNING SystemVerification]: docker version is greater than the most recently validated version. Docker version: 18.06.1-ce. Max validated version: 17.03
+	[WARNING Hostname]: hostname "k8s3" could not be reached
+	[WARNING Hostname]: hostname "k8s3" lookup k8s3 on 223.5.5.5:53: no such host
+[discovery] Trying to connect to API Server "192.168.100.180:6443"
+[discovery] Created cluster-info discovery client, requesting info from "https://192.168.100.180:6443"
+[discovery] Requesting info from "https://192.168.100.180:6443" again to validate TLS against the pinned public key
+[discovery] Cluster info signature and contents are valid and TLS certificate validates against pinned roots, will use API Server "192.168.100.180:6443"
+[discovery] Successfully established connection with API Server "192.168.100.180:6443"
+[kubelet] Downloading configuration for the kubelet from the "kubelet-config-1.11" ConfigMap in the kube-system namespace
+[kubelet] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[preflight] Activating the kubelet service
+[tlsbootstrap] Waiting for the kubelet to perform the TLS Bootstrap...
+[patchnode] Uploading the CRI Socket information "/var/run/dockershim.sock" to the Node API object "k8s3" as an annotation
+
+This node has joined the cluster:
+* Certificate signing request was sent to master and a response
+  was received.
+* The Kubelet was informed of the new secure connection details.
+
+Run 'kubectl get nodes' on the master to see this node join the cluster.
+
+
+
+
+
+
+
+
+
+[root@k8s1 ~]# kubectl get pods -n kube-system -o wide
+NAME                           READY     STATUS    RESTARTS   AGE       IP                NODE      NOMINATED NODE
+coredns-78fcdf6894-cdjwl       1/1       Running   0          1d        10.244.0.2        k8s1      <none>
+coredns-78fcdf6894-hpf4z       1/1       Running   0          1d        10.244.0.3        k8s1      <none>
+etcd-k8s1                      1/1       Running   0          1d        192.168.100.180   k8s1      <none>
+kube-apiserver-k8s1            1/1       Running   0          1d        192.168.100.180   k8s1      <none>
+kube-controller-manager-k8s1   1/1       Running   0          1d        192.168.100.180   k8s1      <none>
+kube-flannel-ds-amd64-m7d2q    1/1       Running   0          1d        192.168.100.180   k8s1      <none>
+kube-flannel-ds-amd64-tc2nb    1/1       Running   0          8m        192.168.100.182   k8s3      <none>
+kube-proxy-6p896               1/1       Running   0          1d        192.168.100.180   k8s1      <none>
+kube-proxy-vtzxd               1/1       Running   0          8m        192.168.100.182   k8s3      <none>
+kube-scheduler-k8s1            1/1       Running   0          1d        192.168.100.180   k8s1      <none>
+[root@k8s1 ~]# kubectl get pods -n kube-system -o wide
+NAME                           READY     STATUS              RESTARTS   AGE       IP                NODE      NOMINATED NODE
+coredns-78fcdf6894-cdjwl       1/1       Running             0          1d        10.244.0.2        k8s1      <none>
+coredns-78fcdf6894-hpf4z       1/1       Running             0          1d        10.244.0.3        k8s1      <none>
+etcd-k8s1                      1/1       Running             0          1d        192.168.100.180   k8s1      <none>
+kube-apiserver-k8s1            1/1       Running             0          1d        192.168.100.180   k8s1      <none>
+kube-controller-manager-k8s1   1/1       Running             0          1d        192.168.100.180   k8s1      <none>
+kube-flannel-ds-amd64-m7d2q    1/1       Running             0          1d        192.168.100.180   k8s1      <none>
+kube-flannel-ds-amd64-sk5st    0/1       Init:0/1            0          9s        192.168.100.181   k8s2      <none>
+kube-flannel-ds-amd64-tc2nb    1/1       Running             0          10m       192.168.100.182   k8s3      <none>
+kube-proxy-6p896               1/1       Running             0          1d        192.168.100.180   k8s1      <none>
+kube-proxy-lcp7j               0/1       ContainerCreating   0          9s        192.168.100.181   k8s2      <none>
+kube-proxy-vtzxd               1/1       Running             0          10m       192.168.100.182   k8s3      <none>
+kube-scheduler-k8s1            1/1       Running             0          1d        192.168.100.180   k8s1      <none>
+
+
+[root@k8s1 ~]# kubectl get node
+NAME      STATUS    ROLES     AGE       VERSION
+k8s1      Ready     master    1d        v1.11.2
+k8s2      Ready     <none>    2m        v1.11.2
+k8s3      Ready     <none>    13m       v1.11.2
