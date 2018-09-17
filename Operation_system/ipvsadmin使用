@@ -1,0 +1,50 @@
+
+
+
+iptables -t mangle -A PREROUTING -d 133.133.65.91  -p tcp --dport 80 -j MARK --set-mark 10
+iptables -t mangle -A PREROUTING -d 133.133.65.91  -p tcp --dport 443 -j MARK --set-mark 10
+
+ipvsadm -A -f 10 -s sh  -p 1800
+ipvsadm -a -f 10 -r 10.123.223.26 -m
+ipvsadm -a -f 10 -r 10.123.14.125 -m
+
+
+
+ipvsadm -A -t 133.133.65.91:80 -s sh
+ipvsadm -a -t 133.133.65.91:80 -r 10.123.223.26:80 -m
+ipvsadm -a -t 133.133.65.91:80 -r 10.123.14.125:80 -m
+
+
+Change：
+  Alter Virtual Server:
+ipvsadm -E -t 133.133.65.91:80 -s wlc
+  Alter Real Server:
+ipvsadm -e -t 133.133.65.91:80 -r 10.123.223.26:80 -i
+
+  Delete Virtual Server
+ipvsadm -D -t 133.133.65.92:80
+  Delete Real Server:
+ipvsadm -d -t 133.133.65.91:80 -r 10.123.223.26:80
+
+
+
+NAME
+       ipvsadm - Linux Virtual Server administration
+
+SYNOPSIS
+       ipvsadm -A|E -t|u|f service-address [-s scheduler]
+               [-p [timeout]] [-M netmask] [-b sched-flags]
+       ipvsadm -D -t|u|f service-address
+       ipvsadm -C
+       ipvsadm -R
+       ipvsadm -S [-n]
+       ipvsadm -a|e -t|u|f service-address -r server-address
+               [-g|i|m] [-w weight] [-x upper] [-y lower]
+       ipvsadm -d -t|u|f service-address -r server-address
+       ipvsadm -L|l [options]
+       ipvsadm -Z [-t|u|f service-address]
+       ipvsadm --set tcp tcpfin udp
+       ipvsadm --start-daemon state [--mcast-interface interface]
+               [--syncid syncid]
+       ipvsadm --stop-daemon state
+       ipvsadm -h
