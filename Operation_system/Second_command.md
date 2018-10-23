@@ -1,3 +1,27 @@
+#### Centos7 防火墙
+centos 7 默认使用了firewalld ，iptables-service 没有安装
+
+所以，如果要用iptables，首先要禁用firewalld,同时安装iptables-service 。否则不会在开机时去读iptables设置的规则
+
+ 
+
+Java代码  收藏代码
+systemctl stop firewalld  
+systemctl disable firewalld  
+yum install iptables-services -y  
+systemctl enable iptables  
+ 
+
+保存规则
+
+Java代码  收藏代码
+/usr/libexec/iptables/iptables.init save  
+  
+##或者  
+iptables-save > /etc/sysconfig/iptables  
+
+
+
 #### 关于mtu
 
 默认的MTU 是1500 其实真正传输只有1472
@@ -16,8 +40,8 @@ ping -i 0 快速的ping
 使用vi /etc/sysctl.conf 永久写入
 net.ipv4.ip_forward = 1
 
-iptables -A PREROUTING -d 116.255.177.52/32 -p tcp -m tcp --dport 33899 -j DNAT --to-destination 192.168.0.225:3389
-iptables -A POSTROUTING -d 192.168.0.225/32 -p tcp -m tcp --dport 3389 -j SNAT --to-source 10.88.88.52
+iptables -A PREROUTING -d 133.133.177.52/32 -p tcp -m tcp --dport 33899 -j DNAT --to-destination 192.168.0.225:3389
+iptables -A POSTROUTING -d 192.168.0.225/32 -p tcp -m tcp --dport 3389 -j SNAT --to-source 172.16.88.52
 
 iptables -A FORWARD -d 192.168.0.225/32 -p tcp -m tcp --dport 3389 -j ACCEPT
 
@@ -25,10 +49,33 @@ iptables -t nat -A POSTROUTING -s 192.168.122.0/24 -o eth0 133.133.66.11 -j MASQ
 
 \- ｏ　是出口外网的网卡
 
-#### centos7 删除路由
+#### centos7 添加ip和路由
+
+
+ip addr add 192.168.100.10/24 dev eth0
+ip addr show eth0
+
+ip addr del 192.168.100.10/24 dev eth0
+
+查看数据包从哪里来
+
+[root@ansible ~]# ip route get 16.255.132.12
+16.255.132.12 via 172.31.143.253 dev eth0 src 172.31.132.20 
+    cach
+
+
+
+
+显示网络统计  ip -s link 
+
+当你需要获取一个特定网络接口的信息时，在网络接口名字后面添加选项ls即可。使用多个选项-s会给你这个特定接口更详细的信息。特别是在排除网络连接故障时
+
+ip -s -s link ls eth0
 
 ip route list
 ip route add 10.8.8.0/24 via 10.0.0.1 dev eth0
+
+修改默认路由
 ip route add default via 10.0.0.1 dev eth0
 ip route del 10.8.8.0/24
 ip route del default
