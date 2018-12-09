@@ -14,6 +14,7 @@
 - MarkdownLint 语法检查
 - Python
 - vscode-ico
+- Material Icon Them
 
 ## 快捷键
 
