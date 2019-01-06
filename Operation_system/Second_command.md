@@ -1,3 +1,8 @@
+### 查看当前cpu核心数
+
+grep 'model name' /proc/cpuinfo
+
+
 #### Centos7 防火墙
 centos 7 默认使用了firewalld ，iptables-service 没有安装
 
