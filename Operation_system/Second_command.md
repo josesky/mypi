@@ -1,3 +1,7 @@
+### 使用nohup 及时在终端退出也不影响
+
+nohup /usr/local/frp/frps -c /usr/local/frp/frps.ini > /tmp/frps.log 2>&1 &
+
 ### 查看当前cpu核心数
 
 grep 'model name' /proc/cpuinfo
