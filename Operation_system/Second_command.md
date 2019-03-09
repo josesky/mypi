@@ -1,3 +1,28 @@
+### 2>&1
+
+```
+2>&1
+每次查重定向问题时，我们总会看到这句话，一般人很难理解这到底是在干嘛。我一开始以为是2要大于1什么的，真是笑话。
+其实这是个重定向的设置，设置让2重定向到1，也就是让stderr标准错误重定向到stdout标准输出，然后两个并在一起再重定向。其中&没什么意思只是区分开来1是代表stdout而不是代表一个文件名。
+用起来的格式是：cmd > file 2>&1。
+为什么设置要放在后面呢?
+具体暂时还不知道，只知道是这么用，放在前面还不行只能放在后面。
+比如：
+$ git push > log.txt 2>&1
+```
+### 域名解析顺序
+
+在linux中，往往解析一个域名时，先会找/etc/hosts文件，如果/etc/hosts文件没有对应，才会去找DNS，那么有什么方式，让主机先找DNS呢？
+当然有，在/etc/nsswitch.conf这个文件里定义，
+#vi /etc/nsswitch.conf
+hosts:      files dns    //默认配置
+
+从配置文件就可以看出系统是先files（/etc/hosts）解析，再从dns（/etc/resolv.conf）解析。
+
+修改成下面这样：
+hosts:      dns files  （centos6）
+
+hosts:     dns files myhostname （centos7）
 ### 使用nohup 及时在终端退出也不影响
 
 nohup /usr/local/frp/frps -c /usr/local/frp/frps.ini > /tmp/frps.log 2>&1 &

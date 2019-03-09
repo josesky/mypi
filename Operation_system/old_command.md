@@ -433,7 +433,13 @@ xz -d 要解压的文件
 
 
 ####  tcpdump 屏蔽端口
-    tcpdump -i eno1  host 192.168.9.106 -nn -vv  and port ! 6622 -w /tmp/kkkk2.pcap
+  tcpdump -i eno1  host 192.168.9.106 -nn -vv  and port ! 6622 -w /tmp/kkkk2.pcap
+
+  tcpdump -X -s 0 -i eth6 host 10.135.44.43 -w a.pcap
+
+其中-X -s 0表示为了抓取完整的数据包、不被截断的参数。
+-i eth6表示指定抓取数据包的网卡，请根据实际组网进行修改。
+
 
 #### arping 查看ip的mac地址
     这个命令是
