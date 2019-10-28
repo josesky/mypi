@@ -1,0 +1,14 @@
+{
+"python.pythonPath": "D:\\Python\\python.exe",
+"editor.renderWhitespace": "all",
+"python.testing.unittestArgs": [
+    "-v",
+    "-s",
+    "./Test",
+    "-p",
+    "*test.py"
+],
+"python.testing.pytestEnabled": false,
+"python.testing.nosetestsEnabled": false,
+"python.testing.unittestEnabled": true
+}
