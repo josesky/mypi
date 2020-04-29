@@ -9,6 +9,14 @@ vim +n file 打开具体报错行
 vim + file 最后一样
 vim +/pattern file 
 
+vim +On file1 file2  打开连个文件竖屏
+ctrl + w h	     光标定位到左边左边	
+ctrl + w l 	     光标定位到右边
+
+vim +on file1 file2  横屏打开两个文件
+ctrl + w j
+ctrl + w k
+```
 
 
 ## 复制 y 和删除 d
