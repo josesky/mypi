@@ -3,6 +3,64 @@
 >基础不牢地动山摇
 
 
+## Docker 安装
+
+操作系统：CentOS Linux release 8.1.1911 (Core)
+
+### 卸载之前版本
+
+```uninstall
+sudo yum remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-engine
+```
+
+### 使用yum仓库进行安装
+
+- 通过使用yum-utils 来设置标准仓库
+
+yum install -y yum-utils
+
+- 添加docker的yum仓库
+
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+
+- 安装dokcer引擎
+
+sudo yum install docker-ce docker-ce-cli containerd.io
+
+安装的时候会有一下报错：
+> package docker-ce-3:19.03.8-3.el7.x86_64 requires containerd.io >= 1.2.2-3, but none of the providers can be installed
+yum install -y https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+
+安装后就可以正常安装了。
+
+- 选择自己需要安装的版本
+
+[root@lk-office ~]# yum list docker-ce --showduplicates | sort -r
+Installed Packages
+Extra Packages for Enterprise Linux Modular 8 - 1.1 kB/s | 7.4 kB     00:06
+Extra Packages for Enterprise Linux 8 - x86_64  8.3 kB/s | 9.8 kB     00:01
+docker-ce.x86_64    3:19.03.8-3.el7                            docker-ce-stable
+docker-ce.x86_64    3:19.03.8-3.el7                            @docker-ce-stable
+docker-ce.x86_64    3:19.03.7-3.el7                            docker-ce-stable
+docker-ce.x86_64    3:19.03.6-3.el7                            docker-ce-stable
+docker-ce.x86_64    3:19.03.5-3.el7                            docker-ce-stable
+docker-ce.x86_64    3:19.03.4-3.el7                            docker-ce-stable
+
+yum install docker-ce-<VERSION_STRING> docker-ce-cli-<VERSION_STRING> containerd.io
+
+### 把自己的单用户加入docker组里面
+
+usermod -aG docker tianxia
+
 ## Docker 默认自带网络
 
 docker 安装完毕后自带三种网络模式
