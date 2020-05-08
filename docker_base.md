@@ -44,6 +44,7 @@ yum install -y https://download.docker.com/linux/centos/7/x86_64/stable/Packages
 
 - 选择自己需要安装的版本
 
+```docker
 [root@lk-office ~]# yum list docker-ce --showduplicates | sort -r
 Installed Packages
 Extra Packages for Enterprise Linux Modular 8 - 1.1 kB/s | 7.4 kB     00:06
@@ -54,12 +55,33 @@ docker-ce.x86_64    3:19.03.7-3.el7                            docker-ce-stable
 docker-ce.x86_64    3:19.03.6-3.el7                            docker-ce-stable
 docker-ce.x86_64    3:19.03.5-3.el7                            docker-ce-stable
 docker-ce.x86_64    3:19.03.4-3.el7                            docker-ce-stable
+```
 
 yum install docker-ce-<VERSION_STRING> docker-ce-cli-<VERSION_STRING> containerd.io
 
 ### 把自己的单用户加入docker组里面
 
 usermod -aG docker tianxia
+
+
+### 使用阿里云的镜像加速器
+
+```jiasu
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": ["https://your.mirror.aliyuncs.com"]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+```
+
+### 查看所有容器中的容器名对应的和对应的ip
+
+docker inspect --format='{{.Name}}{{range .NetworkSettings.Networks}} - {{.IPAddress}}{{end}}' $(docker ps -qa)
+
 
 ## Docker 默认自带网络
 
@@ -115,13 +137,23 @@ Chain DOCKER (2 references)
 
 可以自己定义自己的网络，这里看下相互之间是隔离的
 
->docker network create --driver bridge --getway 192.168.2.1 --subnet 192.168.2.0/24 net_bridge_2.0
 
->docker network create --driver bridge --getway 192.168.1.1 --subnet 192.168.1.0/24 net_bridge_1.0
+>docker network create   --gateway 192.168.38.1 --subnet 192.168.38.0/24 backend1
+>docker network create   --gateway 192.168.39.1 --subnet 192.168.39.0/24 frontend1
 
-我们可以创建自定义网络的镜像
+创建自定义ip地址的容器
 
- docker run -tid --network=net_bridge1.0 --ip 192.168.1.2 --name=busybox1.2 busybox
+>docker run -itd --name m1 --ip 192.168.38.2 --net backend1 busybox
+>docker run -itd --name m2 --ip 192.168.39.3 --net backend1 busybox
+>docker run -itd --name m3 --ip 192.168.39.2 --net frontend1 busybox
+
+容器中默认m1与m2和m3是不通的。这里可以使用
+
+docker network connect frontend1 m2
+
+c2会自动添加一个网卡让后它们就互通了
+
+
 
 ```firwall
 Chain DOCKER-ISOLATION-STAGE-1 (1 references)
