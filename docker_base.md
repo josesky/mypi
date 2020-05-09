@@ -80,8 +80,12 @@ sudo systemctl restart docker
 
 ### 查看所有容器中的容器名对应的和对应的ip
 
-docker inspect --format='{{.Name}}{{range .NetworkSettings.Networks}} - {{.IPAddress}}{{end}}' $(docker ps -qa)
-
+```ip
+[root@lk-office ~]#  docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}-{{.IPAddress}}{{end}}' $(docker ps -aq)
+/m7 - -172.17.0.4
+/m6 - -172.17.0.3
+/m4 - -172.17.0.2
+```
 
 ## Docker 默认自带网络
 
