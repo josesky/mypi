@@ -1,21 +1,21 @@
-### 必须要掌握的命令
+# 需要掌握的命令
 
+## 把一列转换为一行
 
+```awk
+>cat site.txt | awk '{printf "%s ", $0 }'
+elite_centos8_com notice_centos8_com cloudapi kysspi kydbstore_new
 
-#### 怎么把一列转换成一行并已空格分开
+>cat site.txt | awk '{print $1}'|awk '{printf "%s:", $0 }'
+www_centos8_com:elite_centos8_com:notice_centos8_com:cloudapi:kysspi:kydbstore_new:idcpam_centos8_com:
+
 ```
-cat site.txt | awk '{print $1}' | awk '{printf "%s " $0 }'
+- print printf 这个是有区别的，print 自带换行 printf不带，且能把标准输出转换为另外一种方式。
+- awk中的%s 时表示整个字符串 "%s " 这种是已空格作为区分的,还可以以其他方式区分 $0 表示整行
 
-# cat site.txt | awk '{print $1}'|awk '{printf "%s ", $0 }'
-www_zzidc_com elite_zzidc_com notice_zzidc_com cloudapi kysspi kydbstore_new
 
-# cat site.txt | awk '{print $1}'|awk '{printf "%s:", $0 }'
-www_zzidc_com:elite_zzidc_com:notice_zzidc_com:cloudapi:kysspi:kydbstore_new:idcpam_zzidc_com:
-```
-- print printf 这个是有区别的，print 自带空格 printf不带，且能把标准输出转换为另外一种方式。
-- awk中的%s 时表示整个字符串 "%s " 这种是已空格作为区分的；$0 表示整行
+## 进程的暂停和启用
 
-1、进程的暂停和启用
 ```
 查看kill 所有的参数使用 kill -l
 kill -STOP [pid]  kill -19 【pid】  
@@ -24,12 +24,13 @@ kill -STOP [pid]  kill -19 【pid】
 注意暂停进程的状态是【Ts】
 kill -CONT [pid]   kill -18 【pid】 发送SIGCONT (18)重新开始一个停止的进程。
 ```
-2、踢掉正在远程的终端
-```
+## 踢掉正在远程的终端
+
+```shell
 pkill -kill -t pts/0 
 ```
 
-4、netstat 只显示：80 绝对显示  另是grep -w
+## netstat 只显示：80 绝对显示  另是grep -w
 ```
 netstat -anp  | grep "\<80\>"  
 netstat -anp  | grep -w 80
@@ -38,15 +39,17 @@ netstat -st | grep conn
 
 不过这个命令会被ss所代替
 ```
-5、添加网卡的路由
+## 添加网卡的路由
 ```
 [root@pp network-scripts]# vi /etc/sysconfig/network-scripts/route-eth0  
 10.0.0.0/8 via 10.200.0.1
-
 ip route add 10.0.0.0/8 via 10.200.0.1
 ip route del default gw 10.88.88.1
+
 ```
-6、查看最近所有用户登录时间 
+
+## 查看最近所有用户登录时间 
+
 ```
 [root@pp network-scripts]# lastlog 
 $sername         Port     From             Latest    
@@ -85,7 +88,7 @@ dig @8.8.8.8 www.baidu.com 使用指定dns服务器来进行域名解析。
 dig www.baidu.com +trace     追踪域名解析的过程。  
 dig -6 www.baidu.com             用ipv6 解析  
 dig -x 116.255.12.12 反向解析ip  
-dig @8.8.8.8 -t ns zzidc.com 查看这个域名的ns记录。  
+dig @8.8.8.8 -t ns centos8.com 查看这个域名的ns记录。  
 dig + tcp www.baidu.com
 ```
 
@@ -244,10 +247,10 @@ for i in
 -O：使用URL中默认的文件名保存文件到本地
 
  将文件下载到本地并命名为mygettext.html
-curl -o zzidc.l http://www.zzidc.com/
+curl -o centos8.l http://www.centos8.com/
 
  将文件保存到本地并命名为gettext.html
-curl -O http://www.zzidc.com/
+curl -O http://www.centos8.com/
 
 ```
 
