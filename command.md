@@ -13,6 +13,19 @@ www_centos8_com:elite_centos8_com:notice_centos8_com:cloudapi:kysspi:kydbstore_n
 - print printf 这个是有区别的，print 自带换行 printf不带，且能把标准输出转换为另外一种方式。
 - awk中的%s 时表示整个字符串 "%s " 这种是已空格作为区分的,还可以以其他方式区分 $0 表示整行
 
+- NF:Number of field 记录被分割的字段数 常用$NF 取最后一行
+- NR：Number of record 记录整个文件所有的需要
+- FNR: File number of record 每个文件分开计数
+
+```
+#/awk$ awk '{print FILENAME,"NR="NR,"FNR="FNR,"$"NF"="$NF}' class1 class2
+class1 NR=1 FNR=1 $3=87
+class1 NR=2 FNR=2 $3=88
+class1 NR=3 FNR=3 $3=86
+class2 NR=4 FNR=1 $4=90
+class2 NR=5 FNR=2 $4=92
+``` 
+
 
 ## 进程的暂停和启用
 
@@ -93,16 +106,23 @@ dig + tcp www.baidu.com
 ```
 
 
-9、 查看登陆成功的记录
+## 查看登陆成功的记录
+
 cat /var/log/secure | grep Accepted 
 
-10、namp常用
+就像你在windows中的日志筛选中选择4648一样
+
+
+## namp常用
+
 ```
 nmap -T4 -A -v 192.168.55.11
 A主机发现，端口扫描，应用程序，版本侦测，操作系统识别。
 T4 0~5 级别越高，扫描速度越快
 -v 参苏可以显示扫描细节
 -sn 对主机进行发现扫描，不进行端口扫描  -sn 192.168.55.*
+-p1-65536 扫描主机的所有端口
+
 ```
 
 11、查看当前系统里面 比较大前三个文件或目录
