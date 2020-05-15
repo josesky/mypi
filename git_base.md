@@ -15,7 +15,7 @@ sudo docker run --detach \
    --volume /docker_data/gitlab/data:/var/opt/gitlab \
    gitlab/gitlab-ce:latest
 
-# 版本和文件的映射都是先宿主机后容器，就是宿主机的端口映射容器
+### 版本和文件的映射都是先宿主机后容器，就是宿主机的端口映射容器
 
 
 docker run -d --name gitlab_runner2 --restart always \
