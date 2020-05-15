@@ -1,5 +1,33 @@
 # 需要掌握的命令
 
+## Linux 需要长时间操作保存会话
+
+Linux 需要长时间运行，比如文件传输，备份等当前屏幕断开传输也将断开。
+
+screen 可以通过该软件同时连接本地多个屏幕，并且可以自由切换。
+
+screen -S tianxia  #创建一个tianxia的屏幕，然后在屏幕中输入命令需要等待较长时间
+
+ctrl + a + d 可以detach
+
+screen -r id 或者名称就可以返回当前屏幕
+
+
+
+```screen
+[root@lk-office docker]# screen -ls
+There are screens on:
+        16520.top       (Attached)
+        14684.tianxia   (Detached)
+2 Sockets in /run/screen/S-root.
+```
+结束会话可以使用kill id 或者就exit; screen 里面的命令在history 中是不显示的
+
+
+
+
+
+
 ## 把一列转换为一行
 
 ```awk
