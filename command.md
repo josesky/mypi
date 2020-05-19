@@ -23,11 +23,6 @@ There are screens on:
 ```
 结束会话可以使用kill id 或者就exit; screen 里面的命令在history 中是不显示的
 
-
-
-
-
-
 ## 把一列转换为一行
 
 ```awk

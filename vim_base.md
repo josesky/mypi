@@ -12,6 +12,10 @@ vim +/pattern file
 vim +On file1 file2  打开连个文件竖屏
 ctrl + w h	     光标定位到左边左边	
 ctrl + w l 	     光标定位到右边
+向下/上/左/右移动  j/k/h/l
+窗口打开模式 本窗口/新窗口 f/F
+
+
 
 vim +on file1 file2  横屏打开两个文件
 ctrl + w j
