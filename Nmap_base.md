@@ -11,7 +11,7 @@ http://blog.jobbole.com/54595/
 -PA 用tcp 方式发送ack  
 -PS 用tcp方式发送syn  
 -p 端口如22,23 1-65533  
--exclude 可以排除不想扫描的主机  
+-exclude 可以排除不想扫描的主机
 -v 详细信息  
 -O 操作系统  
 -F 快速扫描  

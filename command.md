@@ -12,8 +12,6 @@ ctrl + a + d 可以detach
 
 screen -r id 或者名称就可以返回当前屏幕
 
-
-
 ```screen
 [root@lk-office docker]# screen -ls
 There are screens on:
@@ -22,7 +20,6 @@ There are screens on:
 2 Sockets in /run/screen/S-root.
 ```
 结束会话可以使用kill id 或者就exit; screen 里面的命令在history 中是不显示的
-
 ## 把一列转换为一行
 
 ```awk
