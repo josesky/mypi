@@ -223,9 +223,7 @@ atime 访问 ctime 权限更改  mtime 修改内容
     find ./* -mtime  -1  | xargs cp -v /opt
     find ./* -mtime  -2 -exec cp -v {} /opt \
     find  / -mtime -20 | cpio -admvp /tmp
-    find . -regextype posix-egrep -mindepth 1 ! -regex './(dev|tmp)($|/.*)' ! -name Makefile -a ! -name .svn | cpio -admvp /home/dir2 
-find 的 -regextype 参数指定正则表达式类型，posix-egrep 为 egrep 用的扩展正则表达式，-mindepth 使 find 的输出中不包括目录本身，-regex 参数指定过滤的文件的正则表达式，-regex 前面的感叹号表示跳过，'./(dev|tmp)($|/.*)' 这个正则表达式即表示跳过目录中的第一层 dev 和 tmp 目录以及下面所有的文件和文件夹，最后两个 -name 指定要跳过文件名为 Makefile 和 .svn 的文件，这样在备份版本库的时候非常有用。
-cpio 命令将 find 的输出文件列表依次拷贝到 /home/dir2 目标目录中，-a 表示不更新文件的访问时间，-d 指定自动创建目录，-m 指定保留文件的修改时间，-p 指定 cpio 工作在 Copy-pass 模式，这是专门用来拷贝目录树的一种模式。
+
     拒绝相应的路径
     find / -name iptables ! -path "/etc/sysconfig"
     打包时候跳过目录
@@ -239,10 +237,10 @@ tar -N '2010/06/01' -zcvf home.tar.gz /home
 备份 /home, /etc ，但不要 /home/dmtsai 
 tar --exclude /home/dmtsai -zcvf myfile.tar.gz /home/* /etc
 
-
 find /var/log/* -name "secure*" -exec cp -v {} /tmp/ \;
+find /var/log/* -name "secure*" | xargs -i cat {} | grep Accepted
 
--I 必须指定替换字符　－i 是否指定替换字符-可选 
+-I 必须指定替换字符　-i 是否指定替换字符-可选 
 find /var/log/* -name "secure*" | xargs -I {} cp -v {} /tmp/
 
 find /var/log/* -name "secure*" | xargs -i  cp -v {} /tmp/
@@ -251,16 +249,24 @@ find /var/log/* -name "secure*" | xargs -i  cp -v {} /tmp/
 /var/log/boot.log
 /var/log/yum.log
 
-
 find / -path "/sys" -prune -o  -mtime -1 
 忽略的目录为
 “-path "/sys" -prune -o ”
 如果要忽略两个以上的路径如何处理？
 find / \(  -path "/proc" -o -path "/sys" -o  -path "/redpigmall"  -o -path  /dev  -o -path "/run" \) -prune -o -type f -newermt '2019-03-21 01:30:36.245618844' ! -newermt '2019-03-21 05:49:36.245618844' | more
 
+### 查询具体时间段内产生的日志
+该参数中的m其实就表示mtime，t表示绝对时间，那同样还存在：-newerat、-newerct
+! 是取反的意思 
+find / -type f -newermt '2020-5-26 21:00' ! -newermt '2020-5-26 22:00' 
 
-    grep 查询的跳过
-    grep -r ipv4 --exclude-dir=/sys
+grep 查询的跳过
+grep -r ipv4 --exclude-dir=/sys
+grep 查询 列出文件路径 l
+
+cp 复制的时候保留全路径
+cp --parents                use full source file name under DIRECTOR
+
 
 ``` 
 
