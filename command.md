@@ -1,5 +1,10 @@
 # 需要掌握的命令
 
+## ln 软连接
+
+>更换时区
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
 ## Linux 需要长时间操作保存会话
 
 Linux 需要长时间运行，比如文件传输，备份等当前屏幕断开传输也将断开。
