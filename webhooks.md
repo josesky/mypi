@@ -37,5 +37,8 @@ https://github.com/josesky/mypi/settings/hooks
 添加一个webhook
 
 然后输入之前配置的http://centos8.com:9000/hooks/redeploy-webhook
-
 然后就可以了。
+
+## 验证
+
+在自己的机器上查看一下修改的内容看是否已经改变。
