@@ -9,14 +9,14 @@ https://github.com/adnanh/webhook
 ## 进行简单配置
 
 ```config
-root@SS:/var/scripts# cat hooks.json
 [
   {
-    "id": "opt-tools",
+    "id": "mypi",
     "execute-command": "/var/scripts/redeploy.sh",
-    "command-working-directory": "/data/opt-tools"
+    "command-working-directory": "/data/mypi"
   }
 ]
+
 ```
 
 ## 进行系统上命令执行
@@ -25,7 +25,7 @@ root@SS:/var/scripts# cat hooks.json
 root@SS:/var/scripts# cat redeploy.sh
 #!/bin/sh
 
-cd /data/opt-tools
+cd /data/mypi
 
 git pull
 ```
@@ -36,7 +36,7 @@ https://github.com/josesky/mypi/settings/hooks
 
 添加一个webhook
 
-然后输入之前配置的http://centos8.com:9000/hooks/redeploy-webhook
+然后输入之前配置的http://centos8.com:9000/hooks/mypi
 然后就可以了。
 
 ## 验证
@@ -45,3 +45,18 @@ https://github.com/josesky/mypi/settings/hooks
 
 如果没有通过开启webhook的冗余日志进行查看,分析错误原因。
 
+## 注意
+
+````config
+[
+  {
+    "id": "mypi",
+    "execute-command": "/var/scripts/redeploy.sh",
+    "command-working-directory": "/data/mypi"
+  }
+]
+```
+
+其中执行目录要对应，id也要进行对应。
+
+http://centos8.com:9000/hooks/mypi
