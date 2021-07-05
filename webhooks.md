@@ -43,4 +43,5 @@ https://github.com/josesky/mypi/settings/hooks
 
 在自己的机器上查看一下修改的内容看是否已经改变。如果改变，恭喜流程走通了。
 
-如果没有通过开启webhook的冗余日志进行查看。
+如果没有通过开启webhook的冗余日志进行查看,分析错误原因。
+
