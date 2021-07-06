@@ -355,3 +355,12 @@ git blame file
 ##### 查看具体用户提交记录
 
 git log --author="YouName"
+
+
+#### git 撤销
+
+git revert HEAD
+
+用于撤销当前的提交，原理是在新增一次提交，抵消上次提交的所有变化。不改变过去历史。没有代码丢失风险，多次撤销的话 使用HEAD~1 HEAD~2来进行。
+
+- -no-commit 只抵消暂存区和工作区文件的变化不产生新的提交
