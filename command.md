@@ -915,3 +915,40 @@ tasklist命令
 两种方法删除顽固的DLL文件
 tasklist命令
 ```
+
+### eval 
+
+eval会对后面的cmdLine进行两遍扫描，如果第一遍扫描后，cmdLine是个普通命令，则执行此命令；如果cmdLine中含有变量的间接引用，则保证间接引用的语义。
+
+set 11 22 33 44 
+
+echo "\$$#" 输出结果是 $4; 如果想得到最后一个参数的值需要进行 eval echo "\$$#"  得到结果是44
+
+### shopt
+
+shopt命令用于显示和设置shell中的行为选项，通过这些选项以增强shell易用性；
+
+-s：激活指定的shell行为选项；
+
+-u：关闭指定的shell行为选项。
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+### : 冒号 
+
+在 bash 中，这是一个内建指令：但返回状态值 0。 
+
+: 
+
+echo $? # 回应为 0 
+
+: > f.$$ 
+
+上面这一行，相当于 cat /dev/null >f.$$。不仅写法简短了，而且执行效率也好上许多。 
+
+有时，也会出现以下这类的用法 
+
+: ${HOSTNAME?} ${USER?} ${MAIL?} 
+
+这行的作用是，检查这些环境变数是否已设置，没有设置的将会以标准错误显示错误讯息。像这种检查如果使用类似 test 或 if这类的做法，基本上也可以处理，但都比不上上例的简洁与效率。
