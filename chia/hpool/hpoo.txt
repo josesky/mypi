@@ -1,0 +1,1 @@
+*/8 * * * * /bin/bash /root/monitoring.sh > /var/log/hpool/cronted.log  2>&1
